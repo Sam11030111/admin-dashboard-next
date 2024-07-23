@@ -3,8 +3,13 @@ import Link from "next/link";
 
 import Search from "@/app/ui/dashboard/search/search";
 import Pagination from "@/app/ui/dashboard/pagination/pagination";
+import { fetchProducts } from "@/app/lib/data";
 
-const ProductsPage = () => {
+const ProductsPage = async ({ searchParams }) => {
+  const q = searchParams?.q || "";
+  const page = searchParams?.page || 1;
+  const { count, products } = await fetchProducts(q, page);
+
   return (
     <div className="bg-[var(--bgSoft)] p-5 rounded-[10px] mt-5">
       <div className="flex items-center justify-between">
@@ -27,75 +32,46 @@ const ProductsPage = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="p-[10px]">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/noproduct.jpg"
-                  alt=""
-                  width={40}
-                  height={40}
-                  className="object-cover rounded-full"
-                />
-                Amazon
-              </div>
-            </td>
-            <td className="p-[10px]">Best Seller</td>
-            <td className="p-[10px]">CAD$100</td>
-            <td className="p-[10px]">11.03.2024</td>
-            <td className="p-[10px]">72</td>
-            <td className="p-[10px]">
-              <div className="flex gap-2">
-                <Link href={`/dashboard/products/test`}>
-                  <button className="py-1 px-2 rounded-[5px] text-[var(--text)] border-none cursor-pointer bg-teal-500">
-                    View
-                  </button>
-                </Link>
-                <form>
-                  <input type="hidden" name="id" />
-                  <button className="py-1 px-2 rounded-[5px] text-[var(--text)] border-none cursor-pointer bg-red-300">
-                    Delete
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td className="p-[10px]">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/noproduct.jpg"
-                  alt=""
-                  width={40}
-                  height={40}
-                  className="object-cover rounded-full"
-                />
-                Amazon
-              </div>
-            </td>
-            <td className="p-[10px]">Best Seller</td>
-            <td className="p-[10px]">CAD$100</td>
-            <td className="p-[10px]">11.03.2024</td>
-            <td className="p-[10px]">72</td>
-            <td className="p-[10px]">
-              <div className="flex gap-2">
-                <Link href={`/dashboard/products/test`}>
-                  <button className="py-1 px-2 rounded-[5px] text-[var(--text)] border-none cursor-pointer bg-teal-500">
-                    View
-                  </button>
-                </Link>
-                <form>
-                  <input type="hidden" name="id" />
-                  <button className="py-1 px-2 rounded-[5px] text-[var(--text)] border-none cursor-pointer bg-red-300">
-                    Delete
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
+          {products.map((product) => (
+            <tr key={product.id}>
+              <td className="p-[10px]">
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={product.img || "/noproduct.jpg"}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className="object-cover rounded-full"
+                  />
+                  {product.title}
+                </div>
+              </td>
+              <td className="p-[10px]">{product.desc}</td>
+              <td className="p-[10px]">${product.price}</td>
+              <td className="p-[10px]">
+                {product.createdAt?.toString().slice(4, 16)}
+              </td>
+              <td className="p-[10px]">{product.stock}</td>
+              <td className="p-[10px]">
+                <div className="flex gap-2">
+                  <Link href={`/dashboard/products/${product.id}`}>
+                    <button className="py-1 px-2 rounded-[5px] text-[var(--text)] border-none cursor-pointer bg-teal-500">
+                      View
+                    </button>
+                  </Link>
+                  <form>
+                    <input type="hidden" name="id" />
+                    <button className="py-1 px-2 rounded-[5px] text-[var(--text)] border-none cursor-pointer bg-red-300">
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
-      <Pagination />
+      <Pagination count={count} />
     </div>
   );
 };

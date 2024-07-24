@@ -1,9 +1,9 @@
-import React from "react";
+import { addProduct } from "@/app/lib/actions";
 
 const AddProductPage = () => {
   return (
     <div className="bg-[var(--bgSoft)] p-5 rounded-[10px] mt-5">
-      <form className="flex flex-wrap justify-between">
+      <form action={addProduct} className="flex flex-wrap justify-between">
         <input
           type="text"
           placeholder="title"

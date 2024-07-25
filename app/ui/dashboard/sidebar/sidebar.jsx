@@ -13,6 +13,7 @@ import {
 } from "react-icons/md";
 
 import MenuLink from "./menuLink/menuLink";
+import { auth, signOut } from "@/app/auth";
 
 const menuItems = [
   {
@@ -77,19 +78,21 @@ const menuItems = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = async () => {
+  const { user } = await auth();
+
   return (
     <div className="sticky top-10">
       <div className="flex items-center gap-5 mb-5">
         <Image
-          src="/noavatar.png"
+          src={user.img || "/noavatar.png"}
           alt=""
           width={50}
           height={50}
-          className="rounded-full object-cover"
+          className="rounded-full object-cover aspect-square"
         />
         <div className="flex flex-col">
-          <span className="font-medium">Sam Lee</span>
+          <span className="font-medium">{user.username}</span>
           <span className="text-[12px] text-[var(--textSoft)]">
             Administrator
           </span>
@@ -107,10 +110,17 @@ const Sidebar = () => {
           </li>
         ))}
       </ul>
-      <button className="flex items-center gap-[10px] p-[20px] my-2 rounded-xl hover:bg-[#2e374a] w-full cursor-pointer text-white">
-        <MdLogout />
-        Logout
-      </button>
+      <form
+        action={async () => {
+          "use server";
+          await signOut();
+        }}
+      >
+        <button className="flex items-center gap-[10px] p-[20px] my-2 rounded-xl hover:bg-[#2e374a] w-full cursor-pointer text-white">
+          <MdLogout />
+          Logout
+        </button>
+      </form>
     </div>
   );
 };
